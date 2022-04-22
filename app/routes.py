@@ -13,12 +13,7 @@ planets = [
     Planet(3, "Earth", "terrestrial", True)
 ]
 
-#instantiate blueprint object
 bp = Blueprint("planets_bp",__name__, url_prefix="/planets")
-
-#design endpoint with blueprint tag
-"""..to get all existing planets, so that I can see a list of planets,
-with their id, name, description, and other data of the planet."""
 
 @bp.route("", methods=["GET"])
 def list_planets():
@@ -30,7 +25,3 @@ def list_planets():
     ) for planet in planets]
 
     return jsonify(list_of_planets)
-
-# FLASK_ENV=developer flask run
-
-    
