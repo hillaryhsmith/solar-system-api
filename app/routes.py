@@ -7,6 +7,14 @@ class Planet:
         self.description = description
         self.has_moon = has_moon
 
+    def make_dict(self):
+        return dict(
+                id = self.id,
+                name = self.name,
+                description = self.description,
+                has_moon = self.has_moon,  
+            )
+
 planets = [
     Planet(1, "Mercury", "terrestrial", False),
     Planet(2, "Jupiter", "gaseous", True),
@@ -15,29 +23,23 @@ planets = [
 
 bp = Blueprint("planets_bp",__name__, url_prefix="/planets")
 
+# GET /planets
 @bp.route("", methods=["GET"])
 def list_planets():
-    list_of_planets = [dict(
-        id = planet.id,
-        name = planet.name,
-        description = planet.description,
-        has_moon = planet.has_moon,  
-    ) for planet in planets]
+    list_of_planets = [planet.make_dict() for planet in planets]
 
     return jsonify(list_of_planets)
 
+# GET planets/id
 @bp.route("/<id>", methods=["GET"])
 def get_planet(id):
-    try:
-        id = int(id)
-    except ValueError:
-        return jsonify({"message":f"planet {id} invalid"}), 400
-    
+    id = int(id)
     for planet in planets:
         if planet.id == id:
-            return jsonify(dict(
-                id = planet.id,
-                name = planet.name,
-                description = planet.description,
-                has_moon = planet.has_moon))
-    return jsonify({"message":f"planet {id} not found"}), 404
+            return jsonify(planet.make_dict())
+    # try:
+    #     id = int(id)
+    # except ValueError:
+    #     return jsonify({"message":f"planet {id} invalid"}), 400
+
+    # return jsonify({"message":f"planet {id} not found"}), 404
