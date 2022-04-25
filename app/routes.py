@@ -33,13 +33,13 @@ def list_planets():
 # GET planets/id
 @bp.route("/<id>", methods=["GET"])
 def get_planet(id):
-    id = int(id)
+    try:
+        id = int(id)
+    except ValueError:
+        return jsonify(dict(message=f"planet {id} is invalid")), 400
+
     for planet in planets:
         if planet.id == id:
             return jsonify(planet.make_dict())
-    # try:
-    #     id = int(id)
-    # except ValueError:
-    #     return jsonify({"message":f"planet {id} invalid"}), 400
 
-    # return jsonify({"message":f"planet {id} not found"}), 404
+    return jsonify(dict(message=f"planet {id} not found")), 404
