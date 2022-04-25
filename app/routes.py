@@ -25,3 +25,19 @@ def list_planets():
     ) for planet in planets]
 
     return jsonify(list_of_planets)
+
+@bp.route("/<id>", methods=["GET"])
+def get_planet(id):
+    try:
+        id = int(id)
+    except ValueError:
+        return jsonify({"message":f"planet {id} invalid"}), 400
+    
+    for planet in planets:
+        if planet.id == id:
+            return jsonify(dict(
+                id = planet.id,
+                name = planet.name,
+                description = planet.description,
+                has_moon = planet.has_moon))
+    return jsonify({"message":f"planet {id} not found"}), 404
