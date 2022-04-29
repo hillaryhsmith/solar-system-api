@@ -1,19 +1,19 @@
 from flask import Blueprint, jsonify, abort, make_response
 
-class Planet:
-    def __init__(self, id, name, description, has_moon=None):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.has_moon = has_moon
+# class Planet:
+#     def __init__(self, id, name, description, has_moon=None):
+#         self.id = id
+#         self.name = name
+#         self.description = description
+#         self.has_moon = has_moon
 
-    def make_dict(self):
-        return dict(
-                id = self.id,
-                name = self.name,
-                description = self.description,
-                has_moon = self.has_moon,  
-            )
+#     def make_dict(self):
+#         return dict(
+#                 id = self.id,
+#                 name = self.name,
+#                 description = self.description,
+#                 has_moon = self.has_moon,  
+#             )
 
 planets = [
     Planet(1, "Mercury", "terrestrial", False),
