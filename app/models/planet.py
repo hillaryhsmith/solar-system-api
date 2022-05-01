@@ -8,8 +8,8 @@ class Planet(db.Model):
 
     def make_dict(self):
         return dict(
-                id = self.id,
-                name = self.name,
-                description = self.description,
-                has_moon = self.has_moon,  
+                id=self.id,
+                name=self.name,
+                description=self.description,
+                has_moon=self.has_moon,  
             )

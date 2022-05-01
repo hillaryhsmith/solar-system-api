@@ -13,7 +13,8 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    
+
+    # Register Blueprints 
     from .routes import planet_routes
     app.register_blueprint(planet_routes.bp)
 

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.models.planet import Planet
+from app import db
 
 # class Planet:
 #     def __init__(self, id, name, description, has_moon=None):
@@ -17,14 +18,15 @@ from app.models.planet import Planet
 #             )
 
 # planets = [
-#     Planet(1, "Mercury", "terrestrial", False),
-#     Planet(2, "Jupiter", "gaseous", True),
-#     Planet(3, "Earth", "terrestrial", True)
+#     Planet(1, "Mercury", description="terrestrial", has_moon=False),
+#     Planet(2, "Jupiter", description="gaseous", has_moon=True),
+#     Planet(3, "Earth", description="terrestrial", has_moon=True)
 # ]
 
 bp = Blueprint("planets_bp",__name__, url_prefix="/planets")
 
-@bp.routes("", methods=["POST"])
+# POST /planets
+@bp.route("", methods=["POST"])
 def create_planet():
     request_body = request.get_json()
     planet = Planet(
@@ -40,6 +42,7 @@ def create_planet():
 # GET /planets
 @bp.route("", methods=["GET"])
 def list_planets():
+    planets = Planet.query.all()
     list_of_planets = [planet.make_dict() for planet in planets]
 
     return jsonify(list_of_planets)
