@@ -23,7 +23,7 @@ def create_app(test_config=None):
     migrate.init_app(app, db)
 
     # Register Blueprints 
-    from .routes import planet_routes #is this better or worse than following the way in Learn which separates Planet model import and bp
+    from .routes import planet_routes
     app.register_blueprint(planet_routes.bp)
 
     return app
