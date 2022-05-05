@@ -26,15 +26,19 @@ from app import db
 
 bp = Blueprint("planets_bp",__name__, url_prefix="/planets")
 
+def error_message(message, status_code):
+    abort(make_response(jsonify(dict(details=message)), status_code))
+
 # POST /planets
 @bp.route("", methods=["POST"])
 def create_planet():
     request_body = request.get_json()
-    planet = Planet(
-        name = request_body["name"], 
-        description = request_body["description"],
-        has_moon = request_body["has_moon"]
-        )
+
+    try:
+        planet = Planet.from_dict(request_body)
+    except KeyError as error:
+        error_message(f"Missing key: {error}", 400)
+
     db.session.add(planet)
     db.session.commit()
 
@@ -43,7 +47,13 @@ def create_planet():
 # GET /planets
 @bp.route("", methods=["GET"])
 def list_planets():
-    planets = Planet.query.all()
+    description_param = request.args.get("description")
+    
+    if description_param:
+        planets = Planet.query.filter_by(description=description_param)
+    else:
+        planets = Planet.query.all()
+
     list_of_planets = [planet.make_dict() for planet in planets]
 
     return jsonify(list_of_planets)
@@ -102,14 +112,14 @@ def get_planet_record_by_id(id):
     try: 
         id = int(id)
     except ValueError:
-        abort(make_response(jsonify(dict(details=f"Invalid planet id {id}")), 400))
+        error_message(f"Invalid planet id {id}", 400)
     
     planet = Planet.query.get(id)
 
     if planet:
         return planet
     
-    abort(make_response(jsonify(dict(details=f"No planet with id {id} found")), 404))
+    error_message(f"No planet with id {id} found", 404)
 
 
 
