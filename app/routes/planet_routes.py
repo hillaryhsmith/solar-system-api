@@ -1,4 +1,3 @@
-import re
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.models.planet import Planet
 from app import db
@@ -48,9 +47,15 @@ def create_planet():
 @bp.route("", methods=["GET"])
 def list_planets():
     description_param = request.args.get("description")
-    
+    name_param = request.args.get("name")
+    has_moon_param = request.args.get("has_moon")
+
     if description_param:
         planets = Planet.query.filter_by(description=description_param)
+    elif name_param:
+        planets = Planet.query.filter_by(name=name_param)
+    elif has_moon_param:
+        planets = Planet.query.filter_by(has_moon=has_moon_param)
     else:
         planets = Planet.query.all()
 
@@ -60,7 +65,6 @@ def list_planets():
 
 
 # GET /planets/<planet_id>
-
 @bp.route("/<planet_id>", methods=["GET"])
 def get_planet_by_id(planet_id):
     planet = get_planet_record_by_id(planet_id)
@@ -71,11 +75,12 @@ def get_planet_by_id(planet_id):
 def replace_planet_by_id(planet_id):
     request_body = request.get_json()
     planet = get_planet_record_by_id(planet_id)
-    
-    planet.name = request_body["name"]
-    planet.description = request_body["description"]
-    planet.has_moon = request_body["has_moon"]
-    
+
+    try: 
+        planet.replace_all_details(request_body)
+    except KeyError as error:
+        error_message(f"Missing key: {error}", 400)
+
     db.session.commit()
 
     return jsonify(planet.make_dict())
@@ -95,15 +100,7 @@ def delete_planet_by_id(planet_id):
 def update_planet_by_id(planet_id):
     request_body = request.get_json()
     planet = get_planet_record_by_id(planet_id)
-    planet_keys = request_body.keys()
-    
-    if "name" in planet_keys: 
-        planet.name = request_body["name"]
-    if "description" in planet_keys: 
-        planet.description = request_body["description"]
-    if "has_moon" in planet_keys: 
-        planet.has_moon = request_body["has_moon"]
-
+    planet.replace_some_details(request_body)
     db.session.commit()
     return jsonify(planet.make_dict())
 

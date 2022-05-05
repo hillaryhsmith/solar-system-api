@@ -13,7 +13,22 @@ class Planet(db.Model):
                 description=self.description,
                 has_moon=self.has_moon,  
             )
+    
+    def replace_all_details(self, data_dict):
+        self.name = data_dict["name"]
+        self.description = data_dict["description"]
+        self.has_moon = data_dict["has_moon"]
 
+    def replace_some_details(self, data_dict):
+        planet_keys = data_dict.keys()
+    
+        if "name" in planet_keys: 
+            self.name = data_dict["name"]
+        if "description" in planet_keys: 
+            self.description = data_dict["description"]
+        if "has_moon" in planet_keys: 
+            self.has_moon = data_dict["has_moon"]
+        
     # *************************
     @classmethod
     def from_dict(cls, data_dict):
